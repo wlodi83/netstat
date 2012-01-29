@@ -4,13 +4,13 @@ require 'webrick'
 class Netstat
  def self.open
     #check port 3489
-    netstat_4 = IO.popen("netstat -an | grep :0")
+    netstat_4 = IO.popen("netstat -an | grep :3489")
     #check port 3589
-    netstat_5 = IO.popen("netstat -an | grep :1")
+    netstat_5 = IO.popen("netstat -an | grep :3589")
     #check port 3689
-    netstat_6 = IO.popen("netstat -an | grep :2")
+    netstat_6 = IO.popen("netstat -an | grep :3689")
     #check port 3789
-    netstat_7 = IO.popen("netstat -an | grep :3")
+    netstat_7 = IO.popen("netstat -an | grep :3789")
     a = Array.new
     b = Array.new
     c = Array.new
@@ -53,6 +53,7 @@ class RunScript < WEBrick::HTTPServlet::AbstractServlet
   def do_GET(req, res)
       res['Content-Type'] = 'text/html'
       ree = Netstat.open
+      puts "--------------------------"
       puts ree[0]
       puts "--------------------------"
       puts ree[1]
@@ -63,7 +64,7 @@ class RunScript < WEBrick::HTTPServlet::AbstractServlet
       i = 0
       array = Array.new
       ree[0].each do |result|
-        result.each do |row|
+        result.each_line do |row|
           array[i] = "<h2>#{row}</h2>"
           i = i + 1
         end
@@ -71,7 +72,7 @@ class RunScript < WEBrick::HTTPServlet::AbstractServlet
       i = 0 
       array1 = Array.new
       ree[1].each do |result|
-        result.each do |row|
+        result.each_line do |row|
           array1[i] = "<h2>#{row}</h2>"
           i = i + 1
         end
@@ -79,7 +80,7 @@ class RunScript < WEBrick::HTTPServlet::AbstractServlet
       i = 0 
       array2 = Array.new
       ree[2].each do |result|
-        result.each do |row|
+        result.each_line do |row|
           array2[i] = "<h2>#{row}</h2>"
           i = i + 1
         end
@@ -87,7 +88,7 @@ class RunScript < WEBrick::HTTPServlet::AbstractServlet
       i = 0
       array3 = Array.new
       ree[3].each do |result|
-        result.each do |row|
+        result.each_line do |row|
           array3[i] = "<h2>#{row}</h2>"
           i = i + 1
         end
