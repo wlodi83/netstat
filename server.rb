@@ -2,7 +2,8 @@
 require 'webrick'
 
 class Netstat
- def self.open
+
+  def self.print_results
     #check port 3489
     netstat_4 = IO.popen("netstat -an | grep :3489")
     #check port 3589
@@ -11,90 +12,53 @@ class Netstat
     netstat_6 = IO.popen("netstat -an | grep :3689")
     #check port 3789
     netstat_7 = IO.popen("netstat -an | grep :3789")
-    a = Array.new
-    b = Array.new
-    c = Array.new
-    d = Array.new
-    netstat_4 = netstat_4.readlines
-    i = 0
-    netstat_4.each do |line|
-      a[i] = line
-      i = i + 1
-    end
-    netstat_5 = netstat_5.readlines
-    j = 0
-    netstat_5.each do |line|
-      b[j] = line
-      j = j + 1
-    end
-    netstat_6 = netstat_6.readlines
-    f = 0
-    netstat_6.each do |line|
-      c[f] = line
-      f = f + 1
-    end
-    netstat_7 = netstat_7.readlines
-    g = 0
-    netstat_7.each do |line|
-      d[g] = line
-      g = g + 1
-    end
+
+    #create arrays with results
+    a = Netstat.create_array(netstat_4)
+    b = Netstat.create_array(netstat_5)
+    c = Netstat.create_array(netstat_6)
+    d = Netstat.create_array(netstat_7)
+
     return a, b, c, d
   end
 
-  def self.print_results
-    result_1, result_2, result_3, result_4 = Array.new
-    result_1, result_2, result_3, result_4 = Netstat.open
+  def self.create_array(shell_output)
+    array = Array.new
+    results = shell_output.readlines
+    if results.empty?
+      array.push("THIS PORT IS FREE")
+      return array
+    else
+      results.each do |line|
+        array.push("#{line}")
+      end
+      return array
+    end
   end
 
 end
 
 class RunScript < WEBrick::HTTPServlet::AbstractServlet
   def do_GET(req, res)
-      res['Content-Type'] = 'text/html'
-      ree = Netstat.open
-      puts "--------------------------"
-      puts ree[0]
-      puts "--------------------------"
-      puts ree[1]
-      puts "--------------------------"
-      puts ree[2]
-      puts "-------------------------"
-      puts ree[3]
-      i = 0
-      array = Array.new
-      ree[0].each do |result|
-        result.each_line do |row|
-          array[i] = "<h2>#{row}</h2>"
-          i = i + 1
-        end
-      end
-      i = 0 
-      array1 = Array.new
-      ree[1].each do |result|
-        result.each_line do |row|
-          array1[i] = "<h2>#{row}</h2>"
-          i = i + 1
-        end
-      end
-      i = 0 
-      array2 = Array.new
-      ree[2].each do |result|
-        result.each_line do |row|
-          array2[i] = "<h2>#{row}</h2>"
-          i = i + 1
-        end
-      end
-      i = 0
-      array3 = Array.new
-      ree[3].each do |result|
-        result.each_line do |row|
-          array3[i] = "<h2>#{row}</h2>"
-          i = i + 1
-        end
-      end
+    res['Content-Type'] = 'text/html'
+    result = Netstat.print_results
+    array_1 = print_to_html(result[0])
+    array_2 = print_to_html(result[1])
+    array_3 = print_to_html(result[2])
+    array_4 = print_to_html(result[3])
 
-      res.body = "#{array}" + "#{array1}" + "#{array2}" + "#{array3}"
+    res.body = "<h1>PORT 3489:</h1><br/>#{array_1}" + "<h1>PORT 3589:</h1><br/>#{array_2}" + "<h1>PORT 3689:</h1><br/>#{array_3}" + "<h1>PORT 3789:</h1><br/>#{array_4}"
+  end
+
+  def print_to_html(result)
+    array = Array.new
+    result.each do |res|
+      res.each_line do |row|
+        (array).push("<h3>#{row}</h3>")
+      end
+    end
+
+    return array
   end
 end
 
