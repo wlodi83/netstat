@@ -47,7 +47,7 @@ class RunScript < WEBrick::HTTPServlet::AbstractServlet
     array_3 = print_to_html(result[2])
     array_4 = print_to_html(result[3])
 
-    res.body = "<h1>PORT 3489:</h1><br/>#{array_1}" + "<h1>PORT 3589:</h1><br/>#{array_2}" + "<h1>PORT 3689:</h1><br/>#{array_3}" + "<h1>PORT 3789:</h1><br/>#{array_4}"
+    res.body = "<h1>PORT 3489:</h1><br/>#{array_1}<br/>" + "<h1>PORT 3589:</h1><br/>#{array_2}<br/>" + "<h1>PORT 3689:</h1><br/>#{array_3}<br/>" + "<h1>PORT 3789:</h1><br/>#{array_4}<br/>"
   end
 
   def print_to_html(result)
